@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sea Battle</title>
+</head>
+<body>
+    <h1>Prepare for battle</h1>
+    <h2>Welcome to FlaskApp!</h2>
+
+    <table border = 1 cellspacing="0">
+        {% for row in field %}
+        <tr>
+            {% for value in row %}
+            <td height="50px" width="50px" > {{ value }} </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>
+
