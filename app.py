@@ -1,16 +1,14 @@
 import os
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
-
-from sqlalchemy.sql import func
-
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] =\
-        'sqlite:///' + os.path.join(basedir, 'database.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    'sqlite:///' + os.path.join(basedir, 'database.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = "456jk456gjkdfugi734fuhu83ceji"
 
 db = SQLAlchemy(app)
 
@@ -20,20 +18,169 @@ class User(db.Model):
     password = db.Column(db.String)
     is_admin = db.Column(db.Boolean)
 
-class Student(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    firstname = db.Column(db.String(100), nullable=False)
-    lastname = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(80), unique=True, nullable=False)
-    age = db.Column(db.Integer)
-    created_at = db.Column(db.DateTime(timezone=True),
-                           server_default=func.now())
-    bio = db.Column(db.Text)
+    def __init__(self, username, password, is_admin):
+        self.username = username
+        self.password = password
+        is_admin = is_admin
 
     def __repr__(self):
-        return f'<Student {self.firstname}>'
-    
+        return f'<User {self.username} {self.password} {self.is_admin}>'
+
+
+class Battle_field:
+    field = []
+
+    def __init__(self, n):
+        for _ in range(n + 1):
+            self.field.append([0] * (n + 1))
+
+    def __repr__(self) -> str:
+        visualisation = ""
+        for i in self.field:
+            visualisation += str(i) + '\n'
+        return visualisation
+
+    def edit(self, x, y):
+        if self.field[x][y]:
+            self.field[x][y] = 0
+        else:
+            can_place = ((self.field[x - 1][y - 1] == 0) and (self.field[x - 1][y + 1] == 0)
+                         and (self.field[x + 1][y - 1] == 0) and (self.field[x + 1][y + 1] == 0)
+                         and (self.field[x][y - 1] == 0) and (self.field[x + 1][y] == 0)
+                         and (self.field[x][y + 1]) and (self.field[x - 1][y] == 0))
+            if can_place:
+                self.field[x][y] = 1
+        data = set()
+        data.add((x, y))
+        data.remove((x, y))
+
+
+def getUser(username) -> User:
+    return User.query.get(username)
+
+
+def addUser(username, password, is_admin):
+    user = User(username, password, is_admin)
+    db.session.add(user)
+    db.session.commit()
+
+
+def genField(n):
+    btn = '<td><button type="button" class="sea" onclick="updateCell({x},{y},0)">0</button></td>'
+    code = ""
+    for x in range(1, n + 1):
+        code += "<tr>"
+        for y in range(1, n + 1):
+            code += btn.format(x=x, y=y)
+        code += "</tr>"
+    return code
+
+def create_table(data):
+    html = "<table>\n"
+    for row in data:
+        html += "<tr>\n"
+        for column in row:
+            html += f"<td>{column}</td>\n"
+        html += "</tr>\n"
+    html += "</table>"
+    return html
+
+# использование функции
+priz = [['vvytgt7',"24"],['huhyu','34'],['wgcr','34'],['whccjh.e','34'],['ecjh22c','34']]
+
+
+@app.route('/registration', methods=["GET"])
+def registration():
+    return render_template('registration.html')
+
+
+@app.route('/registration', methods=["POST"])
+def getRegistrationData():
+    username = request.form['username']
+    password = request.form["password"]
+    print(username, password)
+    return 'bebra'
+
+
+@app.route('/login', methods=['GET'])
+def login():
+    return render_template("authorization.html")
+
+
+@app.route('/login', methods=['POST'])
+def getLoginData():
+    username = request.form['username']
+    password = request.form["password"]
+    print(username, password)
+    user = getUser(username)
+    if not user or password != user.password:
+        return render_template('auth_error.html')
+    return "Успешная авторизация!"
+    # if session["username"]:
+    #     user = getUser(session["username"])
+    #     if user.password != session["password"]:
+    #         session["username"] = ""
+    #         session["password"] = ""
+    #         return auth page
+    #     else success
+    # return auth page
+
+    # db.drop_all()
+    # db.create_all()
+    # user = User("Petya", "12345", False)
+    # db.session.add(user)
+    # db.session.commit()
+    # print(getUser("Petya"))
+
+
+@app.route('/registration')
+def register():
+    return render_template("registration.html")
+
+
+
+@app.route('/field_settings', methods=['GET'])
+def field_settings():
+    return render_template("field_settings.html")
+@app.route('/field_settings', methods=["POST"])
+def field_setting():
+    fieldsize = request.form['fieldsize']
+    fieldname = request.form["fieldname"]
+    print(fieldsize, fieldname)
+    return 'bebra'
 @app.route('/')
-def index():
-    students = Student.query.all()
-    return render_template('index.html', students=students)
+@app.route('/setting_prizes', methods=['GET'])
+def setting_prizes():
+    poses = [(1, 2), (4, 7), (1, 9)]
+    return render_template("setting_prizes.html", poses = poses)
+# @app.route('/setting_prizes', methods=["POST"])
+# def setting_prizes():
+#     nameprize = request.form['test']
+#     print(nameprize)
+#     return 'bebra'
+
+
+
+
+
+# @app.route('/logout')
+# def logout():
+
+# @app.route('/register', methods=['POST'])
+# def register_post():
+#     username = request.form.get('username')
+#     password = request.form.get('password')
+#     #role = True if request.form.get('remember') else False
+
+#     user = User.query.filter_by(email=email).first()
+
+#     # check if the user actually exists
+#     # take the user-supplied password, hash it, and compare it to the hashed password in the database
+#     if not user or not check_password_hash(user.password, password):
+#         flash('Please check your login details and try again.')
+#         return redirect(url_for('auth.login')) # if the user doesn't exist or password is wrong, reload the page
+
+#     # if the above check passes, then we know the user has the right credentials
+#     return redirect(url_for('main.profile'))
+if __name__ == '__main__':
+    app.run()
