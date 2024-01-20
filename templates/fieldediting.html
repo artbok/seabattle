@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sea Battle</title>
+    <link rel="stylesheet" href='static/main.css' />
+</head>
+
+<body>
+    <h1>Prepare for battle</h1>
+    <h2>Welcome to FlaskApp!</h2>
+
+    <table border=1 cellspacing="0" class="container">
+        {% for x in range (0, len) %}
+        <tr>
+            {% for y in range (0, len) %}
+            <td height="50px" width="50px" onclick="cellUpdate({{ x }}, {{ y }}, 1)" {% if field[x][y]==1 %}
+                class="ship" {% else %} class="sea" {% endif %}></td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    <script src="static/field.js"></script>
+
+</body>
+
+</html>

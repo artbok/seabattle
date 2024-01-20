@@ -27,20 +27,21 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username} {self.password} {self.is_admin}>'
 
-class Battle_field:
+class BattleField:
     field = []
     def __init__(self, n):
         for _ in range(n+1):
-            self.field.append([0] * (n+ 1))    
+            self.field.append([0] * (n + 1))    
     
     def __repr__(self) -> str:
         visualisation = ""
         for i in self.field:
             visualisation += str(i) + '\n'
         return visualisation
-    def edit(self, x, y):
+    def place_ship(self, x, y) -> bool:
         if self.field[x][y]:
             self.field[x][y] = 0
+            return True
         else:
             can_place = ((self.field[x - 1][y-1] == 0) and (self.field[x - 1][y+1] == 0) 
                     and (self.field[x + 1][y-1] == 0) and (self.field[x + 1][y+1] == 0)
@@ -48,9 +49,8 @@ class Battle_field:
                     and (self.field[x][y+1]) and (self.field[x - 1][y] == 0))
             if can_place:
                 self.field[x][y] = 1
-        data = set()
-        data.add((x, y))
-        data.remove((x, y))
+                return True
+            return False
 
 
 def getUser(username) -> User:
@@ -61,15 +61,14 @@ def addUser(username, password, is_admin):
     db.session.add(user)
     db.session.commit()
 
+battleField: BattleField = None
 def genField(n):
-    btn = '<td><button type="button" class="sea" onclick="updateCell({x},{y},0)">0</button></td>'
-    code = ""
-    for x in range(1, n+1):
-        code += "<tr>"
-        for y in range(1, n+1):
-            code += btn.format(x = x, y = y)
-        code += "</tr>"
-    return code
+    global battleField
+    if battleField:
+        return battleField.field
+    battleField = BattleField(10)
+    return battleField.field
+
 @app.route('/registration', methods = ["GET"])
 def registration():
     return render_template('registration.html')
@@ -86,11 +85,14 @@ def getRegistrationData():
 
 @app.route('/')
 def redirectToLogin():
+    # code = genField(10)
+    # return render_template('test.html', matrix=code)
     return redirect(url_for('login'))
 
 @app.route('/login', methods = ['GET'])
 def login():
     return render_template("authorization.html")
+
 @app.route('/login', methods = ['POST'])
 def getLoginData():
     username = request.form['username']
@@ -114,8 +116,20 @@ def getLoginData():
     # db.session.add(user)
     # db.session.commit()
     #print(getUser("Petya"))
+#@app.route('/cookie')
 # @app.route('/logout')
 # def logout():
+@app.route('/field-editing', methods=['GET'])
+def fieldEditing():
+    return render_template('fieldediting.html', field=genField(10), len=10)
+@app.route('/field-cell-update', methods = ['POST'])
+def cellUpdate():
+    data = request.json
+    x = data['x']
+    y = data['y']
+    value = data['val']
+    battleField.field[x][y] = value
+    return ""
 
 # @app.route('/register', methods=['POST'])
 # def register_post():
