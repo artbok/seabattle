@@ -9,27 +9,41 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] =\
         'sqlite:///' + os.path.join(basedir, 'database.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = "456jk456gjkdfugi734fuhu83ceji"
+app.secret_key = "456jk456gj4kdfugi734fuhu83ceji"
 
 db = SQLAlchemy(app)
 
+editableField = None
+
+#username: Admin
+#password: 12345
 
 class User(db.Model):
     username = db.Column(db.String, primary_key=True)
     password = db.Column(db.String)
-    is_admin = db.Column(db.Boolean)
 
-    def __init__(self, username, password, is_admin):
+    def __init__(self, username, password):
         self.username = username
         self.password = password
-        is_admin = is_admin
 
     def __repr__(self):
         return f'<User {self.username} {self.password} {self.is_admin}>'
+    
+class Field(db.Model):
+    name = db.Column(db.String, primary_key=True)
+    n = db.Column(db.Integer)
+    field = db.Column(db.String)
+    def __init__(self, field):
+        self.field = field
+
 
 class BattleField:
+    name = ""
     field = []
-    def __init__(self, n):
+    n = 0
+    def __init__(self, name, n):
+        self.name = name
+        self.n = n
         for _ in range(n+1):
             self.field.append([0] * (n + 1))    
     
@@ -46,51 +60,57 @@ class BattleField:
             can_place = ((self.field[x - 1][y-1] == 0) and (self.field[x - 1][y+1] == 0) 
                     and (self.field[x + 1][y-1] == 0) and (self.field[x + 1][y+1] == 0)
                     and (self.field[x][y-1] == 0) and (self.field[x + 1][y] == 0)
-                    and (self.field[x][y+1]) and (self.field[x - 1][y] == 0))
+                    and (self.field[x][y+1] == 0) and (self.field[x - 1][y] == 0))
             if can_place:
                 self.field[x][y] = 1
                 return True
-            return False
-
+        return False
 
 def getUser(username) -> User:
-    return User.query.get(username)
+    return User.query.filter(User.username == username).first()
 
-def addUser(username, password, is_admin):
-    user = User(username, password, is_admin)
+
+def addUser(username, password):
+    user = User(username, password)
     db.session.add(user)
     db.session.commit()
 
-battleField: BattleField = None
-def genField(n):
-    global battleField
-    if battleField:
-        return battleField.field
-    battleField = BattleField(10)
-    return battleField.field
+def isAuthorized() -> bool:
+    if "username" in session and "password" in session:
+        user = getUser(session["username"])
+        if user and session["password"] == user.password:
+            return True
+    return False
+
+@app.route('/')
+def main():
+    if not isAuthorized(): return redirect(url_for('login'))
+    return "You're logged!"
+    
 
 @app.route('/registration', methods = ["GET"])
 def registration():
+    if isAuthorized(): 
+        return redirect(url_for('main'))
     return render_template('registration.html')
 
 @app.route('/registration', methods = ["POST"])
 def getRegistrationData():
     username = request.form['username']
     password = request.form["password"]
-    role = True if request.form["is_admin"] == "admin" else False
     if getUser(username):
         return "Account with that username already exists!"
-    addUser(username, password, role)
+    addUser(username, password)
+    session["username"] = username
+    session["password"] = password
+    session.permanent = True
     return 'Account was successfully created!'
 
-@app.route('/')
-def redirectToLogin():
-    # code = genField(10)
-    # return render_template('test.html', matrix=code)
-    return redirect(url_for('login'))
 
 @app.route('/login', methods = ['GET'])
 def login():
+    if isAuthorized(): 
+        return redirect(url_for('main'))
     return render_template("authorization.html")
 
 @app.route('/login', methods = ['POST'])
@@ -100,6 +120,9 @@ def getLoginData():
     user = getUser(username)
     if not user or password != user.password:
         return render_template('auth_error.html')
+    session["username"] = username
+    session["password"] = password
+    session.permanent = True
     return "Успешная авторизация!"
     # if session["username"]:
     #     user = getUser(session["username"])
@@ -119,17 +142,34 @@ def getLoginData():
 #@app.route('/cookie')
 # @app.route('/logout')
 # def logout():
+@app.route('/creating-field', methods=['GET'])
+def creatingField():
+    if not isAuthorized(): return redirect(url_for('login'))
+    return render_template("creating-field.html")
+
+@app.route('/creating-field', methods=["POST"])
+def getFieldSettings():
+    global editableField
+    fieldsize = int(request.form['fieldsize'])
+    fieldname = request.form["fieldname"]
+    editableField = BattleField(fieldname, fieldsize+1)
+    return redirect(url_for('fieldEditing'))
+
 @app.route('/field-editing', methods=['GET'])
 def fieldEditing():
-    return render_template('fieldediting.html', field=genField(10), len=10)
+    if not isAuthorized(): return redirect(url_for('login'))
+    if editableField == None: return redirect(url_for("creatingField"))
+    return render_template('fieldediting.html', field=editableField.field, len=editableField.n)
+
 @app.route('/field-cell-update', methods = ['POST'])
 def cellUpdate():
     data = request.json
     x = data['x']
     y = data['y']
-    value = data['val']
-    battleField.field[x][y] = value
-    return ""
+    if editableField.place_ship(x, y):
+        return ""
+    else:
+        return "error"
 
 # @app.route('/register', methods=['POST'])
 # def register_post():

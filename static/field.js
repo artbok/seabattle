@@ -1,8 +1,7 @@
-async function cellUpdate(x, y, val) {
+async function cellUpdate(x, y) {
     data = new Object();
     data.x = x;
     data.y = y;
-    data.val = val;
 
     fetch("field-cell-update", {
         method: 'POST',
@@ -13,10 +12,14 @@ async function cellUpdate(x, y, val) {
     })
         .then((response) => response.text())
         .then((responseText) => {
-            location.reload()
+            if (responseText.length == 0)
+                location.reload();
+            else
+                alert("Вы не можете поставить сюда корабль!");
         })
         .catch((error) => {
             console.error(error);
+            alert("server error: " + error);
         });
 
 
