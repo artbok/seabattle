@@ -14,7 +14,6 @@ body {
   font-weight: 300;
   line-height: 1.42em;
   color: #A7A1AE;
-  background-color: green;
   background-color: #1F2739;
 }
 
@@ -67,6 +66,15 @@ h2 a {
   box-shadow: 0 2px 2px -2px #0E1119;
 }
 
+.container {
+  text-align: left;
+  overflow: hidden;
+  width: 80%;
+  margin: 0 auto;
+  display: table;
+  padding: 0 0 8em 0;
+}
+
 .container td.ship {
   background-color: red;
   text-align: center;
@@ -74,8 +82,8 @@ h2 a {
   font-size: 1em;
   -webkit-box-shadow: 0 2px 2px -2px #0E1119;
   -moz-box-shadow: 0 2px 2px -2px #0E1119;
-  box-shadow: 0 2px 2px -2px #0E1119;
-  aspect-ratio: 1 / 1;
+  box-shadow: 0 2px 2px -2px hsl(224, 28%, 8%);
+
 }
 
 .container td.sea {
@@ -85,17 +93,6 @@ h2 a {
   -webkit-box-shadow: 0 2px 2px -2px #0E1119;
   -moz-box-shadow: 0 2px 2px -2px #0E1119;
   box-shadow: 0 2px 2px -2px #0E1119;
-  /* background-image: url("bg2.jpg"); */
-  aspect-ratio: 1 / 1;
-}
-
-.container {
-  text-align: left;
-  overflow: hidden;
-  width: 80%;
-  margin: 0 auto;
-  display: table;
-  padding: 0 0 8em 0;
 }
 
 .container td,
@@ -115,11 +112,10 @@ h2 a {
   background-color: #2C3446;
 }
 
-.container th {
-  background-color: #1F2739;
-}
 
-/* .container td:first-child { color: #FB667A; } */
+.container td:first-child {
+  color: #FB667A;
+}
 
 .container tr:hover {
   background-color: #464A52;

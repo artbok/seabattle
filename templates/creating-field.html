@@ -13,9 +13,28 @@
             <input name="fieldname">
             <br>
             <br>
-            <input type="submit">
+            <input type="submit" onclick="checkStatus()">
         </form>
     </center>
+    <script>
+        async function checkStatus() {
+             fetch("creating-field", {
+                method: 'POST',
+                headers: new Headers({
+                    'Content-Type': 'application/json', // <-- Specifying the Content-Type
+                }),
+            })
+                .then((response) => response.text())
+                .then((responseText) => {
+                    if (responseText.length == 0)
+                        location.reload();
+                    else if (responseText.length == 1)
+                        alert("Размер поля не должен превышать 27!")
+                    else if (responseText == 2)
+                        alert("Поле с таким именем уже существует!");
+                })
+        }
+    </script>
 </body>
 
 </html>

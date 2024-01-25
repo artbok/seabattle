@@ -1,0 +1,41 @@
+<style>
+    button {
+        background-color: #378aa5;
+        border-color: blask;
+        color: white;
+        font-size: 40pt;
+
+    }
+</style>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+<style>
+    body {
+        height: 500px;
+        background: url(https://klike.net/uploads/posts/2022-11/1669184591_3-23.jpg) no-repeat;
+        background-size: cover;
+
+    }
+</style>
+
+<body>
+
+    <form method="POST">
+        <table align="center" border=1 cellspacing="0" class="container">
+            <font face="COMIC SANS MS">
+                {% for field in fields %}
+                <tr>
+                    <p style="font-size: 80px">{{field}}
+
+                        <font face="COMIC SANS MS"><button name="play" value="{{field}}">Играть</button>
+                            <font face="COMIC SANS MS"><button name="edit" value="{{field}}">Редактировать</button>
+                    </p>
+                </tr>
+                <p style="font-size: 80px">{% endfor %}</p>
+        </table>
+</body>
+
+</html>

@@ -2,28 +2,35 @@
 <html>
 
 <body>
+    <title>Регистрация</title>
     <center>
         <form method="POST">
-            <small>Username</small>
+            <meta charset="utf-8">
+            <style>
+                body {
+                    background: url(https://bogatyr.club/uploads/posts/2023-03/1679711773_bogatyr-club-p-fon-dlya-prezentatsii-volni-vkontakte-73.jpg) no-repeat;
+                    /* Параметры фона */
+                }
+            </style>
+
+            <div class="head_info">
+            </div>
+            <b><small>
+                    <p style="color:black;">Придумайте имя пользователя:</p>
+                </small></b>
+            <input name="username" size="20">
             <br>
-            <input name="username">
+            <b><small>
+                    <p style="color:black;">Придумайте пароль:</p>
+                </small></b>
+            <input type="password" name="password" size="20">
             <br>
-            <small>Password</small>
-            <br>
-            <input type= "password" name="password">
-            <br>
-            <!-- <div>
-                <align="right">
-                    <input type="radio" name="is_admin" value="user">
-                    Пользователь
-                    <input type="radio" name="is_admin" value="admin">
-                    Админ
-                </align>
-            </div> -->
             <br>
             <input type="submit">
-            </form>
-            <p><a href="/login">Войти</a></p>
-        </center>
+        </form>
+
+        <p><a href="/login">Авторизоваться</a></p>
+    </center>
 </body>
+
 </html>

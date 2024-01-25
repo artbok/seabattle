@@ -2,20 +2,34 @@
 <html>
 
 <body>
+    <title>Авторизация</title>
     <center>
         <form method="POST">
-            <small>Username</small>
+            <meta charset="utf-8">
+            <title>Фон</title>
+            <style>
+                body {
+                    background: url(https://bogatyr.club/uploads/posts/2023-03/1679711773_bogatyr-club-p-fon-dlya-prezentatsii-volni-vkontakte-73.jpg) no-repeat;
+                    /* Параметры фона */
+                }
+            </style>
+
+            <div class="head_info">
+            </div>
+            <b><small>
+                    <p style="color:black;">Пользователь</p>
+                </small></b>
+            <input name="username" size="20">
             <br>
-            <input name="username">
-            <br>
-            <small>Password</small>
-            <br>
-            <input type="password" name="password">
+            <b><small>
+                    <p style="color:black;">Пароль</p>
+                </small></b>
+            <input type="password" name="password" size="20">
             <br>
             <br>
             <input type="submit">
         </form>
-        <br>
+
         <p><a href="/registration">Зарегестрироваться</a></p>
     </center>
 </body>

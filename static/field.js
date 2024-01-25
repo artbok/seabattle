@@ -19,7 +19,7 @@ async function cellUpdate(x, y) {
         })
         .catch((error) => {
             console.error(error);
-            alert("server error: " + error);
+            alert("cellUpdate server error: " + error);
         });
 
 

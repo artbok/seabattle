@@ -1,5 +1,6 @@
 import os
-from flask import Flask, render_template, request, url_for, redirect, session, jsonify
+import time
+from flask import Flask, render_template, request, url_for, redirect, session, jsonify, send_file
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -18,6 +19,9 @@ editableField = None
 #username: Admin
 #password: 12345
 
+def current_milli_time():
+    return round(time.time() * 1000)
+
 class User(db.Model):
     username = db.Column(db.String, primary_key=True)
     password = db.Column(db.String)
@@ -33,28 +37,49 @@ class Field(db.Model):
     name = db.Column(db.String, primary_key=True)
     n = db.Column(db.Integer)
     field = db.Column(db.String)
-    def __init__(self, field):
+    def __init__(self, name, n, field):
+        self.name = name
+        self.n = n
         self.field = field
 
+def addField():
+    global editableField
+    field = getField(editableField.name)
+    if not field:
+        field = Field(editableField.name, editableField.n, str(editableField.field))
+        db.session.add(field)
+    else:
+        field.field = str(editableField.field)
+    db.session.commit()
+    editableField = None
+
+def getField(fieldname) -> Field:
+    return Field.query.filter(Field.name == fieldname).first()
 
 class BattleField:
     name = ""
     field = []
     n = 0
-    def __init__(self, name, n):
+    def __init__(self, name, n, field=None):
         self.name = name
         self.n = n
-        for _ in range(n+1):
-            self.field.append([0] * (n + 1))    
+        if not field:
+            for _ in range(n+1):
+                self.field.append([0] * (n + 1))    
+        else:
+            self.field = field
     
     def __repr__(self) -> str:
         visualisation = ""
         for i in self.field:
             visualisation += str(i) + '\n'
         return visualisation
-    def place_ship(self, x, y) -> bool:
+    
+    changeId: int = 0
+    def placeShip(self, x, y) -> bool:
         if self.field[x][y]:
             self.field[x][y] = 0
+            self.changeId = current_milli_time()
             return True
         else:
             can_place = ((self.field[x - 1][y-1] == 0) and (self.field[x - 1][y+1] == 0) 
@@ -63,6 +88,7 @@ class BattleField:
                     and (self.field[x][y+1] == 0) and (self.field[x - 1][y] == 0))
             if can_place:
                 self.field[x][y] = 1
+                self.changeId = current_milli_time()
                 return True
         return False
 
@@ -75,6 +101,7 @@ def addUser(username, password):
     db.session.add(user)
     db.session.commit()
 
+
 def isAuthorized() -> bool:
     if "username" in session and "password" in session:
         user = getUser(session["username"])
@@ -82,16 +109,24 @@ def isAuthorized() -> bool:
             return True
     return False
 
+
+@app.route('/waiting')
+def waitingScreen():
+    if not isAuthorized(): return redirect(url_for('login'))
+    return render_template("waiting-screen.html", username = session["username"])
+
+
 @app.route('/')
 def main():
     if not isAuthorized(): return redirect(url_for('login'))
-    return "You're logged!"
+    if session["username"] != "Admin":
+        return redirect(url_for("waitingScreen"))
+    return "Дарова, админ"
     
 
 @app.route('/registration', methods = ["GET"])
 def registration():
-    if isAuthorized(): 
-        return redirect(url_for('main'))
+    if isAuthorized(): return redirect(url_for('main'))
     return render_template('registration.html')
 
 @app.route('/registration', methods = ["POST"])
@@ -104,7 +139,7 @@ def getRegistrationData():
     session["username"] = username
     session["password"] = password
     session.permanent = True
-    return 'Account was successfully created!'
+    return redirect(url_for("waitingScreen"))
 
 
 @app.route('/login', methods = ['GET'])
@@ -112,6 +147,7 @@ def login():
     if isAuthorized(): 
         return redirect(url_for('main'))
     return render_template("authorization.html")
+
 
 @app.route('/login', methods = ['POST'])
 def getLoginData():
@@ -123,23 +159,9 @@ def getLoginData():
     session["username"] = username
     session["password"] = password
     session.permanent = True
-    return "Успешная авторизация!"
-    # if session["username"]:
-    #     user = getUser(session["username"])
-    #     if user.password != session["password"]:
-    #         session["username"] = ""
-    #         session["password"] = ""
-    #         return auth page
-    #     else success
-    # return auth page
+    return redirect(url_for('waiting-screen'))
 
-    # db.drop_all()
-    # db.create_all()
-    # user = User("Petya", "12345", False)
-    # db.session.add(user)
-    # db.session.commit()
-    #print(getUser("Petya"))
-#@app.route('/cookie')
+
 # @app.route('/logout')
 # def logout():
 @app.route('/creating-field', methods=['GET'])
@@ -161,31 +183,49 @@ def fieldEditing():
     if editableField == None: return redirect(url_for("creatingField"))
     return render_template('fieldediting.html', field=editableField.field, len=editableField.n)
 
+@app.route('/field-editing', methods=['POST'])
+def saveField():
+    addField()
+    return "Поле успешно сохранено"
+
 @app.route('/field-cell-update', methods = ['POST'])
 def cellUpdate():
     data = request.json
     x = data['x']
     y = data['y']
-    if editableField.place_ship(x, y):
+    if editableField.placeShip(x, y):
         return ""
     else:
         return "error"
+    
+@app.route('/wait-field-update', methods = ['POST'])
+def waitFieldUpdate():
+    if not editableField:
+        return "RELOAD"
+    
+    changeId: int = int(session["changeId"] if "changeId" in session else 0)
+    if editableField.changeId > changeId:
+        session["changeId"] = editableField.changeId
+        return "UPDATE: changeId = " + str(changeId)
 
-# @app.route('/register', methods=['POST'])
-# def register_post():
-#     username = request.form.get('username')
-#     password = request.form.get('password')
-#     #role = True if request.form.get('remember') else False
+    return "WAIT"
+    
+@app.route('/fields', methods=['GET'])
+def fields():
+    fields = []
+    for field in getField
+    return render_template('view-fields.html', fields=["bebra", "bebra2", "bebra3"])
 
-#     user = User.query.filter_by(email=email).first()
+@app.route('/fields', methods=['POST'])
+def getFieldButtonClick():
+    global editableField
+    if "play" in request.form:
+        pass
+    elif "edit" in request.form:
+        field = getField(request.form["edit"])
+        editableField = BattleField(field.name, field.n, eval(field.field))
+        return redirect(url_for("fieldEditing"))
+    return 'bebra'
 
-#     # check if the user actually exists
-#     # take the user-supplied password, hash it, and compare it to the hashed password in the database
-#     if not user or not check_password_hash(user.password, password):
-#         flash('Please check your login details and try again.')
-#         return redirect(url_for('auth.login')) # if the user doesn't exist or password is wrong, reload the page
-
-#     # if the above check passes, then we know the user has the right credentials
-#     return redirect(url_for('main.profile'))
 if __name__ == '__main__':
     app.run()
