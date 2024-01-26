@@ -1,9 +1,10 @@
 <style>
     button {
-        background-color: #378aa5;
+        background-color: #593bef;
         border-color: blask;
         color: white;
-        font-size: 40pt;
+        font-size: 30pt;
+        border-radius: 25%;
 
     }
 </style>
@@ -15,27 +16,30 @@
 <style>
     body {
         height: 500px;
-        background: url(https://klike.net/uploads/posts/2022-11/1669184591_3-23.jpg) no-repeat;
+        background: url(https://img.freepik.com/free-photo/sea-water-background_74190-1326.jpg) no-repeat;
         background-size: cover;
+        background-repeat: repeat-x;
 
     }
 </style>
-
 <body>
-
     <form method="POST">
         <table align="center" border=1 cellspacing="0" class="container">
             <font face="COMIC SANS MS">
                 {% for field in fields %}
-                <tr>
-                    <p style="font-size: 80px">{{field}}
-
+                    <tr>
+                    <p style="font-size: 60px">
+                        {{field}}
                         <font face="COMIC SANS MS"><button name="play" value="{{field}}">Играть</button>
                             <font face="COMIC SANS MS"><button name="edit" value="{{field}}">Редактировать</button>
+                                <font face="COMIC SANS MS"><button name="delete" value="{{field}}">Удалить</button>
                     </p>
-                </tr>
-                <p style="font-size: 80px">{% endfor %}</p>
+                    </tr>
+                {% endfor %}
+                <p align="center">
+                    <font face="COMIC SANS MS"><button name="create" value="{{field}}">Создать поле</button></font>
+                </p>
         </table>
+    </form>
 </body>
-
 </html>

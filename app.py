@@ -14,8 +14,6 @@ app.secret_key = "456jk456gj4kdfugi734fuhu83ceji"
 
 db = SQLAlchemy(app)
 
-editableField = None
-
 #username: Admin
 #password: 12345
 
@@ -42,6 +40,7 @@ class Field(db.Model):
         self.n = n
         self.field = field
 
+
 def addField():
     global editableField
     field = getField(editableField.name)
@@ -53,18 +52,22 @@ def addField():
     db.session.commit()
     editableField = None
 
+
 def getField(fieldname) -> Field:
     return Field.query.filter(Field.name == fieldname).first()
 
-class BattleField:
+
+class EditField:
     name = ""
-    field = []
     n = 0
-    def __init__(self, name, n, field=None):
+    field = []
+    ships = set()
+    changeId: int = 0
+    def __init__(self, name, n, field = None):
         self.name = name
         self.n = n
         if not field:
-            for _ in range(n+1):
+            for _ in range(n + 1):
                 self.field.append([0] * (n + 1))    
         else:
             self.field = field
@@ -75,10 +78,10 @@ class BattleField:
             visualisation += str(i) + '\n'
         return visualisation
     
-    changeId: int = 0
     def placeShip(self, x, y) -> bool:
         if self.field[x][y]:
             self.field[x][y] = 0
+            self.ships.remove((x, y))
             self.changeId = current_milli_time()
             return True
         else:
@@ -88,9 +91,25 @@ class BattleField:
                     and (self.field[x][y+1] == 0) and (self.field[x - 1][y] == 0))
             if can_place:
                 self.field[x][y] = 1
+                self.ships.add((x, y))
                 self.changeId = current_milli_time()
                 return True
         return False
+
+
+editableField: EditField = None
+
+
+class GameField:
+    changeId = 0
+    player1 = None
+    player2 = None
+    def __init__(self):
+        self.name = editableField.name
+        self.n = editableField.n
+        self.field = editableField.field.copy()
+        self.ships = editableField.ships.copy()
+        editableField = None
 
 def getUser(username) -> User:
     return User.query.filter(User.username == username).first()
@@ -109,6 +128,15 @@ def isAuthorized() -> bool:
             return True
     return False
 
+def adminPage(page):
+    if "username" in session and "password" in session:
+        user = getUser(session["username"])
+        if user and session["password"] == user.password:
+            if user.username == "Admin":
+                return page
+            return "Доступ запрещён"
+    return redirect(url_for('login'))
+
 
 @app.route('/waiting')
 def waitingScreen():
@@ -121,7 +149,7 @@ def main():
     if not isAuthorized(): return redirect(url_for('login'))
     if session["username"] != "Admin":
         return redirect(url_for("waitingScreen"))
-    return "Дарова, админ"
+    return redirect(url_for("fields"))
     
 
 @app.route('/registration', methods = ["GET"])
@@ -162,31 +190,58 @@ def getLoginData():
     return redirect(url_for('waiting-screen'))
 
 
-# @app.route('/logout')
-# def logout():
+@app.route('/fields', methods=['GET'])
+def fields():
+    fields = []
+    for field in list(Field.query):
+        fields.append(field.name)
+    return adminPage(render_template('view-fields.html', fields = fields))
+
+
+@app.route('/fields', methods=['POST'])
+def getFieldButtonClick():
+    global editableField
+    if "play" in request.form:
+        return "иди лесом"
+    elif "edit" in request.form:
+        field = getField(request.form["edit"])
+        editableField = EditField(field.name, field.n, eval(field.field))
+        return redirect(url_for("fieldEditing"))
+    elif "delete" in request.form:
+        Field.query.filter(Field.name == request.form["delete"]).delete()
+        db.session.commit()
+        getField(request.form["delete"])
+        db.session.commit()
+        return adminPage(redirect(url_for('fields')))
+    else:
+        return adminPage(redirect(url_for("creatingField")))
+
 @app.route('/creating-field', methods=['GET'])
 def creatingField():
-    if not isAuthorized(): return redirect(url_for('login'))
-    return render_template("creating-field.html")
+    return adminPage(render_template("creating-field.html"))
+
 
 @app.route('/creating-field', methods=["POST"])
 def getFieldSettings():
     global editableField
     fieldsize = int(request.form['fieldsize'])
     fieldname = request.form["fieldname"]
-    editableField = BattleField(fieldname, fieldsize+1)
+    editableField = EditField(fieldname, fieldsize+1)
     return redirect(url_for('fieldEditing'))
+
 
 @app.route('/field-editing', methods=['GET'])
 def fieldEditing():
-    if not isAuthorized(): return redirect(url_for('login'))
-    if editableField == None: return redirect(url_for("creatingField"))
-    return render_template('fieldediting.html', field=editableField.field, len=editableField.n)
+    if editableField == None: 
+        return adminPage(redirect(url_for("fields")))
+    return adminPage(render_template('fieldediting.html', field = editableField.field, len = editableField.n))
+
 
 @app.route('/field-editing', methods=['POST'])
 def saveField():
     addField()
     return "Поле успешно сохранено"
+
 
 @app.route('/field-cell-update', methods = ['POST'])
 def cellUpdate():
@@ -198,34 +253,20 @@ def cellUpdate():
     else:
         return "error"
     
+
 @app.route('/wait-field-update', methods = ['POST'])
 def waitFieldUpdate():
     if not editableField:
         return "RELOAD"
-    
     changeId: int = int(session["changeId"] if "changeId" in session else 0)
     if editableField.changeId > changeId:
         session["changeId"] = editableField.changeId
         return "UPDATE: changeId = " + str(changeId)
-
     return "WAIT"
     
-@app.route('/fields', methods=['GET'])
-def fields():
-    fields = []
-    for field in getField
-    return render_template('view-fields.html', fields=["bebra", "bebra2", "bebra3"])
 
-@app.route('/fields', methods=['POST'])
-def getFieldButtonClick():
-    global editableField
-    if "play" in request.form:
-        pass
-    elif "edit" in request.form:
-        field = getField(request.form["edit"])
-        editableField = BattleField(field.name, field.n, eval(field.field))
-        return redirect(url_for("fieldEditing"))
-    return 'bebra'
-
+# @app.route('/setup-prizes', methods=['POST'])
+# def setupPrizes():
+    
 if __name__ == '__main__':
     app.run()

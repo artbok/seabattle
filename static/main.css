@@ -50,13 +50,6 @@ h2 a {
   color: #FFF842;
 }
 
-.container th h1 {
-  font-weight: bold;
-  font-size: 1em;
-  text-align: left;
-  color: #185875;
-}
-
 .container td {
   text-align: center;
   font-weight: normal;
@@ -67,18 +60,23 @@ h2 a {
 }
 
 .container {
-  text-align: left;
   overflow: hidden;
-  width: 80%;
-  margin: 0 auto;
+  width: 90vh;
+  height: 90vh;
+  margin: 1 auto;
   display: table;
-  padding: 0 0 8em 0;
 }
 
 .container td.ship {
+  background-image: url('ship.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   background-color: red;
   text-align: center;
   font-weight: normal;
+  min-width: 30px;
+  min-height: 30px;
   font-size: 1em;
   -webkit-box-shadow: 0 2px 2px -2px #0E1119;
   -moz-box-shadow: 0 2px 2px -2px #0E1119;
@@ -89,6 +87,8 @@ h2 a {
 .container td.sea {
   text-align: center;
   font-weight: normal;
+  min-width: 30px;
+  min-height: 30px;
   font-size: 1em;
   -webkit-box-shadow: 0 2px 2px -2px #0E1119;
   -moz-box-shadow: 0 2px 2px -2px #0E1119;
@@ -133,15 +133,7 @@ h2 a {
   transform: translate3d(6px, -6px, 0);
 
   transition-delay: 0s;
-  transition-duration: 0.4s;
+  transition-duration: 0.3s;
   transition-property: all;
   transition-timing-function: line;
-}
-
-@media (max-width: 800px) {
-
-  .container td:nth-child(4),
-  .container th:nth-child(4) {
-    display: none;
-  }
 }
