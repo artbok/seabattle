@@ -4,9 +4,9 @@ async function waitForUpdate() {
         fetch("wait-field-update", {
             method: 'POST',
             headers: new Headers({
-                'Content-Type': 'application/json', // <-- Specifying the Content-Type
+                'Content-Type': 'application/json'
             }),
-            body: JSON.stringify(data)  // + "&val=" + val // <-- Post parameters
+            body: JSON.stringify(data) 
         })
             .then((response) => response.text())
             .then((responseText) => {
@@ -16,7 +16,6 @@ async function waitForUpdate() {
                     location.reload();
                 } else if (responseText == "WAIT") {
                     waitForUpdate();
-                    ; //console.log("wait");
                 } else {
                     alert("получена команда:" + responseText);
                     waitForUpdate();
@@ -28,7 +27,7 @@ async function waitForUpdate() {
                 alert("waitForUpdate: server error: " + error);
             });
         // waitForUpdate();
-    }, 250)
+    }, 300)
 }
 
 waitForUpdate();

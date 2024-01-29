@@ -1,14 +1,14 @@
 <style>
-    p {
+    label {
         font-family: 'segoe script', sans-serif;
         color: blask;
-
+        font-size: 60px;
     }
 
     body {
-        height: 1200px;
-        background: url(https://static.insales-cdn.com/images/products/1/1037/434725901/%D0%9F%D0%B8%D1%80%D0%B0%D1%82%D1%81%D0%BA%D0%B8%D0%B8%CC%86_%D0%B1%D0%BE%D0%B8%CC%86.jpg);
+        background: url("static/add_players.jpg");
         background-size: cover;
+        background-repeat: no-repeat;
     }
 
     input {
@@ -34,15 +34,24 @@
 </style>
 
 <head>
-    <meta charset="UTF-8">
+    <title>Добавить игроков</title>
 </head>
 
 <body>
     <form method="POST">
-        <tr>
-            <p align="center" style="font-size: 60px;">Игрок1: <input type="text"></p>
-            <p align="center" style="font-size: 60px;">Игрок2: <input type="text"></p>
-        </tr>
-        <p align="center"><button>Играть</button></p>
+        <label for="player1">Игрок1: </label>
+        <select name="player1" id="player1">
+            {% for player in players %}
+                <option value={{player}}>{{player}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="player2">Игрок2: </label>
+        <select name="player2" id="player2">
+            {% for player in players %}
+                <option value={{player}}>{{player}}</option>
+            {% endfor %}
+        </select>
+        <p align="center"><input type="submit" value="Создать игру"></p>
     </form>
 </body

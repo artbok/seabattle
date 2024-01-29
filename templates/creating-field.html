@@ -13,8 +13,9 @@
     }
 
     body {
-        background: url(https://phonoteka.org/uploads/posts/2021-05/1620188146_22-phonoteka_org-p-voda-foni-multyashnie-33.jpg) repeat;
-        background-size: 1280px;
+        background: url("static/create_field.jpg");
+        background-size: cover;
+        background-repeat: no-repeat;
     }
 
     b {
@@ -24,7 +25,7 @@
     }
 
     input {
-        width: 300px;
+        width: 350px;
         height: 40px;
         font-size: 25pt;
     }
@@ -35,10 +36,10 @@
     <center>
         <form method="POST">
             <b>Размер поля</b> <br>
-            <input type="number" max="27" name="fieldsize"> <br>
+            <input type="number" max="27" name="fieldsize" value="10"> <br>
             <br>
             <b>Название поля</b> <br>
-            <br><input name="fieldname">
+            <br><input name="fieldname" value="{{suggestedName}}">
             <br> <br>
             <button>Создать</button>
         </form>

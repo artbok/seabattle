@@ -54,9 +54,6 @@ h2 a {
   text-align: center;
   font-weight: normal;
   font-size: 1em;
-  -webkit-box-shadow: 0 2px 2px -2px #0E1119;
-  -moz-box-shadow: 0 2px 2px -2px #0E1119;
-  box-shadow: 0 2px 2px -2px #0E1119;
 }
 
 .container {
@@ -72,27 +69,29 @@ h2 a {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  background-color: red;
-  text-align: center;
-  font-weight: normal;
   min-width: 30px;
   min-height: 30px;
-  font-size: 1em;
-  -webkit-box-shadow: 0 2px 2px -2px #0E1119;
-  -moz-box-shadow: 0 2px 2px -2px #0E1119;
-  box-shadow: 0 2px 2px -2px hsl(224, 28%, 8%);
 
+}
+
+table,
+th,
+td {
+  border: 1px solid #0ca2dd;
+  border-collapse: collapse;
 }
 
 .container td.sea {
   text-align: center;
-  font-weight: normal;
+  background-color: #1d89b4;
   min-width: 30px;
   min-height: 30px;
-  font-size: 1em;
-  -webkit-box-shadow: 0 2px 2px -2px #0E1119;
-  -moz-box-shadow: 0 2px 2px -2px #0E1119;
-  box-shadow: 0 2px 2px -2px #0E1119;
+}
+.container td.empty {
+  text-align: center;
+  background-color: #ff0000;
+  min-width: 30px;
+  min-height: 30px;
 }
 
 .container td,
@@ -102,38 +101,21 @@ h2 a {
   padding-left: 2%;
 }
 
-/* Background-color of the odd rows */
-.container tr:nth-child(odd) {
-  background-color: #323C50;
-}
-
-/* Background-color of the even rows */
-.container tr:nth-child(even) {
-  background-color: #2C3446;
-}
-
-
-.container td:first-child {
-  color: #FB667A;
-}
 
 .container tr:hover {
   background-color: #464A52;
-  -webkit-box-shadow: 0 6px 6px -6px #0E1119;
-  -moz-box-shadow: 0 6px 6px -6px #0E1119;
-  box-shadow: 0 6px 6px -6px #0E1119;
 }
 
 .container td:hover {
   background-color: #FFF842;
-  color: #403E10;
+  color: #fff200;
   font-weight: bold;
 
   box-shadow: #7F7C21 -1px 1px, #7F7C21 -2px 2px, #7F7C21 -3px 3px, #7F7C21 -4px 4px, #7F7C21 -5px 5px, #7F7C21 -6px 6px;
   transform: translate3d(6px, -6px, 0);
 
   transition-delay: 0s;
-  transition-duration: 0.3s;
+  transition-duration: 0s;
   transition-property: all;
   transition-timing-function: line;
 }
