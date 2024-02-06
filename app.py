@@ -142,8 +142,8 @@ class GameField:
         self.field = eval(field.field)
         self.ships = eval(field.ships)
     
-    def getTitle(self, move):
-        return move + "<br>" + "<br>".join(self.titles)
+    def getTitle(self):
+        return " | ".join(self.titles)
     
     def fire(self, x, y):
         value = self.field[x][y]
@@ -375,14 +375,14 @@ def gameScreen():
     if session["username"] == 'admin':
         if not game:
             return redirect(url_for('fields'))
-        players = [player.username for player in game.players]
-        return render_template('admin-game.html', field = game.field, len = game.n + 1, move = f"{game.players[game.i].username} выбирает куда сбросить ядерку", players = players)
+        players = [(player.username, player.shots) for player in game.players]
+        return render_template('admin-game.html', field = game.field, len = game.n + 1, move = f"{game.players[game.i].username} выбирает куда сбросить ядерку", players = players, remain=len(game.ships), actions=game.getTitle())
     else:
         if game:
             for player in game.players:
                 if session["username"] == player.username:
                     move = "ВАШ ХОД! СТРЕЛЯЙТЕ!" if game.players[game.i] == player else "ДОЖДИСЬ СВОЕГО ХОДА!"
-                    return render_template('player-game.html', field = game.field, len = game.n + 1, move = game.getTitle(move))
+                    return render_template('player-game.html', field = game.field, len = game.n + 1, move = move)
         return redirect(url_for('waitingScreen'))
 
 

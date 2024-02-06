@@ -6,13 +6,18 @@
     <title>Морской бой</title>
     <link rel="stylesheet" href="static/main.css">
     <style>
-        .father {
+        .column {
             display: flex;
         }
 
         .object {
             margin: 10px;
             padding: 10px;
+        }
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
         }
     </style>
 </head>
@@ -24,7 +29,7 @@
     </div>
 
     <!-- Game Board Section -->
-    <div class="father">
+    <div class="column">
         <div class="object" align="left">
             <table border="1" cellspacing="0" class="container">
                 {% for x in range(len) %}
@@ -44,14 +49,17 @@
             </table>
             <br>
         </div>
-
-        <div class="father" align="right">
+        <div class="row" align="right">
             <div class="object" align="right">
                 {% for player in players %}
-                <div>{{player}}</div>
-                <button onclick="addShot('{{ player }}')">&#43; Add Shot</button>
-                <br>
+                    {{player[0]}}: {{player[1]}}<button onclick="addShot('{{ player }}')">&#43;</button>
                 {% endfor %}
+            </div>
+            <div class="object">
+                <p>Осталось кораблей {{remain}}</p>
+            </div>
+            <div class="object">
+                <p>{{actions}}</p>
             </div>
         </div>
     </div>
