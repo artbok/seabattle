@@ -1,34 +1,61 @@
-<!DOCTYPE html>
-<html>
+<style>
+    body {
+        background: url("static/auth_bg.jpg");
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    p {
+        font-family: 'segoe script', sans-serif;
+        color: blask;
+        font-size: 40px;
+
+    }
+
+    input[type=text],
+    input[type=password] {
+        font-size: 40px;
+        width: 400px;
+        height: 50px;
+        font-family: 'segoe script', sans-serif;
+        background-color: #ADD8E6;
+    }
+
+    input[type=submit] {
+        background-color: #40E0D0;
+        border-color: blask;
+        color: blask;
+        font-size: 30pt;
+        border-radius: 30%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'segoe script', sans-serif;
+
+    }
+</style>
+
+<head>
+    <title>Авторизация</title>
+</head>
 
 <body>
-    <title>Регистрация</title>
     <center>
         <form method="POST">
             <meta charset="utf-8">
-            <style>
-                body {
-                    background: url("static/auth_bg.jpg");
-                    background-size: cover;
-                    background-repeat: no-repeat;
-                }
-            </style>
-            <b><small>
-                    <p style="color:black;">Придумайте имя пользователя:</p>
-                </small></b>
-            <input name="username" size="20" maxlength="10">
-            <br>
-            <b><small>
-                    <p style="color:black;">Придумайте пароль:</p>
-                </small></b>
-            <input type="password" name="password" size="20">
+            <div class="head_info"></div>
+            <b>
+                <p style="color:black;">Придумайте никнейм</p>
+            </b>
+            <input type="text" name="username" maxlength="10">
+            <b>
+                <p style="color:black;">Придумайте пароль</p>
+            </b>
+            <input type="password" name="password">
             <br>
             <br>
-            <input type="submit">
+            <input type="submit" value="Зарегестрироваться">
+            <p><a href="/login">Есть аккаунт? Авторизуйся!</a></p>
         </form>
-
-        <p><a href="/login">Авторизоваться</a></p>
     </center>
 </body>
-
-</html>

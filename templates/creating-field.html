@@ -1,5 +1,5 @@
 <style>
-    button {
+    input[type=submit] {
         background-color: #00CCCC;
         border-color: blask;
         color: black;
@@ -13,7 +13,7 @@
     }
 
     body {
-        background: url("static/create_field.jpg");
+        background: url("static/bubbles.png");
         background-size: cover;
         background-repeat: no-repeat;
     }
@@ -24,26 +24,27 @@
         font-size: 40px;
     }
 
-    input {
+    input[type=number],
+    input[type=text] {
         width: 350px;
         height: 40px;
         font-size: 25pt;
     }
 </style>
-<html>
 
 <body>
     <center>
         <form method="POST">
-            <b>Размер поля</b> <br>
+            <b>Размер поля</b>
+            <br>
             <input type="number" max="27" name="fieldsize" value="10"> <br>
             <br>
-            <b>Название поля</b> <br>
-            <br><input name="fieldname" value="{{suggestedName}}">
-            <br> <br>
-            <button>Создать</button>
+            <b>Название поля</b>
+            <br>
+            <input type="text" name="fieldname" value="{{suggestedName}}">
+            <br>
+            <br>
+            <input type="submit" value="Создать">
         </form>
     </center>
 </body>
-
-</html>

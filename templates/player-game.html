@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Морской бой</title>
+    <link rel="stylesheet" href='static/main.css' />
+</head>
+
+<body>
+    <div>
+        <p align="center">{{move}}</p>
+        <table border=1 cellspacing="0" align="center" class="container">
+            {% for x in range (len) %}
+            <tr>
+                {% for y in range (len) %}
+                    <td 
+                    {% if field[x][y]==-1 %} 
+                        class="empty"></td>
+                    {% else %}
+                        {% if field[x][y] == 0 or field[x][y] == 1 %}
+                            onclick="fire({{ x }}, {{ y }})" class="sea"></td>
+                        {% else %}
+                            class="border">{{field[x][y]}}</td>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <br>
+        <script src="static/game.js"></script>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Морской бой</title>
+    <link rel="stylesheet" href="static/main.css">
+    <style>
+        .father {
+            display: flex;
+        }
+
+        .object {
+            margin: 10px;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header or Intro Section -->
+    <div>
+        {{move}}
+    </div>
+
+    <!-- Game Board Section -->
+    <div class="father">
+        <div class="object" align="left">
+            <table border="1" cellspacing="0" class="container">
+                {% for x in range(len) %}
+                <tr>
+                    {% for y in range(len) %}
+                    <td {% if field[x][y]==-1 %} class="empty"></td>
+                    {% else %}
+                    {% if field[x][y] == 0 or field[x][y] == 1 %}
+                    class="sea"></td>
+                    {% else %}
+                    class="border">{{field[x][y]}}</td>
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+            <br>
+        </div>
+
+        <div class="father" align="right">
+            <div class="object" align="right">
+                {% for player in players %}
+                <div>{{player}}</div>
+                <button onclick="addShot('{{ player }}')">&#43; Add Shot</button>
+                <br>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script src="static/game.js"></script>
+</body>
+
+</html>

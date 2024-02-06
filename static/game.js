@@ -13,15 +13,30 @@ async function fire(x, y) {
     })
         .then((response) => response.text())
         .then((responseText) => {
-            if (responseText.startsWith("Error"))
-                alert("В эту клетку уже стреляли!");
-            else if (responseText.startsWith("notYourMove"))
+            if (responseText.startsWith("notYourMove"))
                 alert("Сейчас не твой ход!");
-            else if (responseText.startsWith("NOAMMO"))
+            else if (responseText.startsWith("noShots"))
                 alert("У вас кончились выстрелы!");   
-            else if (responseText.startsWith("HIT") || (responseText.startsWith("MISS")))
+            else if (responseText.startsWith("hit") || (responseText.startsWith("miss")))
                 location.reload();
         })
+        .catch((error) => {
+            console.error(error);
+            alert("FIRE server error: " + error);
+        });
+}
+
+async function addShot(username) {
+    data = new Object()
+    data.username = username
+    cd += 2
+    fetch("addShot", {
+        method: 'POST',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+        }),
+        body: JSON.stringify(data)
+    })
         .catch((error) => {
             console.error(error);
             alert("FIRE server error: " + error);

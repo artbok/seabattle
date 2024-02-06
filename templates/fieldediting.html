@@ -10,11 +10,17 @@
 <body>
     <div>
         <table border=1 cellspacing="0" align="center" class="container">
-            {% for x in range (1, len) %}
+            {% for x in range (len) %}
             <tr>
-                {% for y in range (1, len) %}
-                <td onclick="cellUpdate({{ x }}, {{ y }})" {% if field[x][y]==1 %} class="ship" {% else %} class="sea" {%
-                    endif %}></td>
+                {% for y in range (len) %}
+                <td {% if field[x][y]==0 %} onclick="cellUpdate({{ x }}, {{ y }})" class="sea"></td>
+                {% else %}
+                {% if field[x][y] == 1 %}
+                onclick="cellUpdate({{ x }}, {{ y }})" class="ship"></td>
+                {% else %}
+                class="border">{{field[x][y]}}</td>
+                {% endif %}
+                {% endif %}
                 {% endfor %}
             </tr>
             {% endfor %}
@@ -27,6 +33,12 @@
         <br>
         <script src="static/field.js"></script>
     </div>
+    <svg>
+        <filter id="noise">
+            <feTurbulence type="turbulence" baseFrequency=".001" id="turbulence" numOctaves="5"></feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="50"></feDisplacementMap> -->
+        </filter>
+    </svg>
 </body>
 
 </html>
