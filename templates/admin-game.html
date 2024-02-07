@@ -1,33 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
+<style>
+    .column {
+        display: flex;
+    }
+
+    .object {
+        margin: 30px;
+        padding: 30px;
+    }
+
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    button.saved {
+        background-color: #00CCCC;
+        border-color: black;
+        color: black;
+        font-size: 50px;
+        border-radius: 15%;
+        align-items: center;
+        justify-content: center;
+        font-family: 'segoe script', sans-serif;
+        border: 2px solid rgb(0, 0, 0);
+        border-radius: 4px;
+    }
+
+    o {
+        font-size: 45pt;
+        font-family: 'segoe script', sans-serif;
+        color: white;
+    }
+    t {
+        font-size: 20pt;
+        font-family: 'segoe script', sans-serif;
+        color: white;
+    }
+    j {
+        font-size: 45pt;
+        font-family: 'segoe script', sans-serif;
+        color: white;
+    }
+
+    l {
+        font-size: 60pt;
+        font-family: 'Arial', sans-serif;
+        color: white;
+    }
+
+    body {
+        font-family: 'segoe script', sans-serif;
+        font-weight: 300;
+        background-color: #1F2739;
+        font-size: 50pt;
+    }
+    div.actionlist {
+        border: rgb(40, 210, 225);
+        background-color: rgb(40, 210, 225);;
+        padding: 5px;
+        font-size: 50px;
+        border-radius: 7%;
+    }
+</style>
 
 <head>
-    <meta charset="UTF-8">
     <title>Морской бой</title>
     <link rel="stylesheet" href="static/main.css">
-    <style>
-        .column {
-            display: flex;
-        }
 
-        .object {
-            margin: 10px;
-            padding: 10px;
-        }
-        .row:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-    </style>
 </head>
 
 <body>
     <!-- Header or Intro Section -->
     <div>
-        {{move}}
+        <br>
+        <l>
+            <center>{{move}}</center>
+        </l>
     </div>
-
     <!-- Game Board Section -->
     <div class="column">
         <div class="object" align="left">
@@ -35,36 +85,52 @@
                 {% for x in range(len) %}
                 <tr>
                     {% for y in range(len) %}
-                    <td {% if field[x][y]==-1 %} class="empty"></td>
-                    {% else %}
-                    {% if field[x][y] == 0 or field[x][y] == 1 %}
-                    class="sea"></td>
-                    {% else %}
-                    class="border">{{field[x][y]}}</td>
-                    {% endif %}
-                    {% endif %}
+                        <td 
+                        {% if field[x][y]==-1 %} 
+                            class="miss"></td>
+                        {% else %}
+                            {% if field[x][y] == 0 %}
+                                class="sea"></td>
+                            {% else %}
+                                {% if field[x][y] == -10 %}
+                                    class="beatenShip"></td>
+                                {% else %}
+                                    {% if field[x][y] == 1 %}
+                                        class="ship"</td>
+                                    {% else %}
+                                        class="border">{{field[x][y]}}</td>
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 {% endfor %}
             </table>
             <br>
         </div>
-        <div class="row" align="right">
-            <div class="object" align="right">
+        <div class="row" align="center">
+            <div class="object" align="center"> 
                 {% for player in players %}
-                    {{player[0]}}: {{player[1]}}<button onclick="addShot('{{ player }}')">&#43;</button>
+                <br>
+                <o>
+                    <center>{{player[0]}}: {{player[1]}}
+                    <button class="saved" onclick="addShot('{{ player[0] }}')">&#43;</button>
+                    </center>
+                </o>
                 {% endfor %}
             </div>
             <div class="object">
-                <p>Осталось кораблей {{remain}}</p>
+                <j>Осталось кораблей: {{remain}}</j>
             </div>
-            <div class="object">
-                <p>{{actions}}</p>
+            <div class="object, actionlist" >
+                <t>История выстрелов:</t>
+                {% for action in actions %}
+                    <br>
+                    <t> - {{action}}</t>
+                {% endfor %}
             </div>
         </div>
     </div>
-
     <script src="static/game.js"></script>
 </body>
-
-</html>

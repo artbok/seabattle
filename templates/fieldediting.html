@@ -1,8 +1,14 @@
-<!DOCTYPE html>
+<style>
+    body {
+        font-family: 'segoe script', sans-serif;
+        font-weight: 300;
+        background-color: #1F2739;
+        font-size: 50pt;
+    }
+</style>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
     <title>Редактирование поля</title>
     <link rel="stylesheet" href='static/main.css' />
 </head>
@@ -25,20 +31,12 @@
             </tr>
             {% endfor %}
         </table>
-        <br>
-        <br>
         <form method="POST">
             <p align="center"><button>Сохранить</button></p>
         </form>
         <br>
         <script src="static/field.js"></script>
     </div>
-    <svg>
-        <filter id="noise">
-            <feTurbulence type="turbulence" baseFrequency=".001" id="turbulence" numOctaves="5"></feTurbulence>
-            <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="50"></feDisplacementMap> -->
-        </filter>
-    </svg>
 </body>
 
 </html>

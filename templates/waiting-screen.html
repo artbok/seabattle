@@ -1,58 +1,15 @@
-<html>
 <style>
     body {
         height: 250px;
         background: url(https://catherineasquithgallery.com/uploads/posts/2021-02/1612755086_79-p-fon-golubie-volni-90.jpg) no-repeat;
         background-size: cover;
     }
-
-    p.rules {
-        border: 1px solid black;
-        padding: 30px;
-        background-color: #00CED1;
-    }
-
-    p {
-        font-family: 'segoe script', sans-serif;
-        color: blask;
-    }
-
-    table {
-        font-family: 'segoe script', sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-    }
-
-    td,
-    th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-        font-family: 'segoe script', sans-serif;
-    }
-
-    tr:nth-child(even) {
-        background-color: #dddddd;
-    }
-
-    table {
-        font-family: 'segoe script', sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-    }
-
-    td,
-    th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-        font-family: 'segoe script', sans-serif;
-    }
-
-    tr:nth-child(even) {
-        background-color: #87CEEB;
-    }
 </style>
+
+<head>
+    <title>Экран ожидания</title>
+    <link rel="stylesheet" href='static/main.css' />
+</head>
 <script>
     async function sendStatus() {
         setTimeout(function () {
@@ -72,9 +29,6 @@
 </script>
 
 <body bgcolor="#000" background="nubex.png">
-    <meta charset="utf-8">
-    <div class="head_info">
-    </div>
     <figure>
         <audio autoplay src="https://zvukogram.com/index.php?r=site/download&id=80524"></audio>
     </figure>
@@ -82,18 +36,18 @@
         ВЫ УСПЕШНО АВТОРИЗОВАЛИСЬ КАК {{username}}! </p>
     <p align="center">ХОРОШЕЙ ИГРЫ</p>
     <p align="center">ПРАВИЛА ИГРЫ </p>
-    <meta charset="utf-8">
-    </meta>
-    <p class="rules" align="center">После присоединения к игре приготовьтесь к настоящему бою. Ваша задача
-        уничтожить как можно больше кораблей. После каждого попадания вам будут даваться призы, которые вы можете
-        посмортеть в таблице призов.</p>
+    <strong>
+        <p class="rules" align="center">После присоединения к игре приготовьтесь к настоящему бою. Ваша задача
+            уничтожить как можно больше кораблей, стреляя в пустые клетки в ваш ход. После каждого попадания вам будут даваться призы, которые вы можете
+            посмортеть в таблице призов.</p>
+    </strong>
     <p align="center"> ТАБЛИЦА ПРИЗОВ</p>
 
     <body>
-        <table>
-            <tr>
-                <th>Призы</th>
-                <th>Дата выдачи</th>
+        <table class="prizes">
+            <tr class="prizes">
+                <th class="prizes">Призы</th>
+                <th class="prizes">Дата выдачи</th>
             </tr>
             <tr>{% for prize in prizes %} <td>{{prize[0]}}</td>
                 <td>{{prize[1]}}</td> {% endfor %}

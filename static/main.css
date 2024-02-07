@@ -1,21 +1,7 @@
-/* table {
-    width: 100%;
-  }
-
-td {
-    text-align: center;
-  } */
-
 @charset "UTF-8";
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
 
-body {
-  font-family: 'Open Sans', sans-serif;
-  font-weight: 300;
-  line-height: 1.42em;
-  color: #A7A1AE;
-  background-color: #1F2739;
-}
+
 
 h1 {
   font-size: 3em;
@@ -70,21 +56,15 @@ h2 a {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  /* min-width: 30px;
-  min-height: 30px; */
-  /* animation: animate-ship 10s linear infinite; */
 }
 
-/* @keyframes animate-ship {
-  0% {
-    transform: translateX(-100%);
-  }
-
-  100% {
-    transform: translateX(calc(100vw + 100%));
-  }
-} */
-
+.container td.invisibleShip {
+  background-image: url('ship.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: grayscale(100%);
+}
 th,
 td {
   border: 1px solid #0ca2dd;
@@ -104,11 +84,19 @@ table {
   min-height: 30px;
 }
 
-.container td.empty {
-  text-align: center;
-  background-color: #ff0000;
-  min-width: 30px;
-  min-height: 30px;
+
+.container td.miss {
+  background-image: url('miss.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.container td.beatenShip {
+  background-image: url('beaten-ship.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .container td,
@@ -143,20 +131,137 @@ table {
   min-width: 30px;
   min-height: 30px;
   font-family: 'segoe script', sans-serif;
-  font-size: 20pt;
-  color: blask;
+  font-size: 15pt;
+  color: white;
   border: none;
 }
 
 button {
   background-color: #00CCCC;
-  border-color: blask;
+  border-color: black;
   color: black;
-  font-size: 25pt;
+  font-size: 30pt;
   border-radius: 15%;
-  display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'segoe script', sans-serif;
+  border: 2px solid rgb(0, 0, 0);
+  border-radius: 4px;
+  margin: 10px;
 
+}
+
+label {
+  font-family: 'segoe script', sans-serif;
+  color: black;
+  font-size: 70px;
+}
+
+input[type=password] {
+  font-size: 40px;
+  width: 400px;
+  height: 50px;
+  font-family: 'segoe script', sans-serif;
+  background-color: #ADD8E6;
+  border: 2px solid rgb(0, 0, 0);
+  border-radius: 4px;
+}
+
+input[type=submit] {
+  background-color: #40E0D0;
+  border-color: black;
+  color: black;
+  font-size: 20pt;
+  border-radius: 50%;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-family: 'segoe script', sans-serif;
+  border: 2px solid rgb(0, 0, 0);
+  border-radius: 4px;
+
+}
+
+select {
+  font-size: 40px;
+  width: 400px;
+  height: 60px;
+  font-family: 'segoe script', sans-serif;
+  background-color: #ADD8E6;
+}
+
+a {
+  font-family: 'segoe script', sans-serif;
+  font-size: 40px;
+  color: black;
+}
+
+p {
+  font-family: 'segoe script', sans-serif;
+  color: black;
+  font-size: 40px;
+
+}
+
+b {
+  font-family: 'segoe script', sans-serif;
+  color: black;
+  font-size: 40px;
+}
+
+input[type=number],
+input[type=text] {
+  width: 350px;
+  height: 40px;
+  font-size: 25pt;
+  font-family: 'segoe script', sans-serif;
+  background-color: #ADD8E6;
+  border: 2px solid rgb(0, 0, 0);
+  border-radius: 4px;
+}
+
+input {
+  font-size: 40px;
+  width: 400px;
+  height: 50px;
+  font-family: 'segoe script', sans-serif;
+  background-color: #ADD8E6;
+}
+
+p.rules {
+  border: 1px solid black;
+  padding: 30px;
+  background-color: #00CED1;
+  font-family: 'segoe script', sans-serif;
+}
+div.rules {
+  border: 1px solid black;
+  padding: 30px;
+  background-color: #00CED1;
+  font-family: 'segoe script', sans-serif;
+}
+
+table.prizes {
+  font-family: 'segoe script', sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td.prizes,
+th.prizes {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+  font-family: 'segoe script', sans-serif;
+}
+
+
+.father {
+  display: flex;
+}
+
+.object {
+  margin: 10px;
+  padding: 10px;
 }

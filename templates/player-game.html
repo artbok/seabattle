@@ -1,6 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
+<style>
+    .column {
+        display: flex;
+    }
 
+    .object {
+        margin: 30px;
+        padding: 30px;
+    }
+
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    button.saved {
+        background-color: #00CCCC;
+        border-color: black;
+        color: black;
+        font-size: 50px;
+        border-radius: 15%;
+        align-items: center;
+        justify-content: center;
+        font-family: 'segoe script', sans-serif;
+        border: 2px solid rgb(0, 0, 0);
+        border-radius: 4px;
+    }
+
+    o {
+        font-size: 45pt;
+        font-family: 'segoe script', sans-serif;
+        color: white;
+    }
+
+    j {
+        font-size: 45pt;
+        font-family: 'segoe script', sans-serif;
+        color: white;
+    }
+
+    l {
+        font-size: 60pt;
+        font-family: 'Arial', sans-serif;
+        color: white;
+    }
+
+    body {
+        font-family: 'segoe script', sans-serif;
+        font-weight: 300;
+        background-color: #1F2739;
+        font-size: 50pt;
+    }
+
+    t {
+        font-size: 20pt;
+        font-family: 'segoe script', sans-serif;
+        color: white;
+    }
+    div.actionlist {
+        border: rgb(40, 210, 225);
+        background-color: rgb(40, 210, 225);;
+        padding: 5px;
+        font-size: 50px;
+        border-radius: 7%;
+    }
+</style>
 <head>
     <meta charset="UTF-8">
     <title>Морской бой</title>
@@ -8,29 +72,49 @@
 </head>
 
 <body>
-    <div>
-        <p align="center">{{move}}</p>
-        <table border=1 cellspacing="0" align="center" class="container">
-            {% for x in range (len) %}
-            <tr>
-                {% for y in range (len) %}
-                    <td 
-                    {% if field[x][y]==-1 %} 
-                        class="empty"></td>
-                    {% else %}
-                        {% if field[x][y] == 0 or field[x][y] == 1 %}
-                            onclick="fire({{ x }}, {{ y }})" class="sea"></td>
+    <div class="column">
+        <div class="object" align="left">
+            <p align="center">{{move}}</p>
+            <table border=1 cellspacing="0" align="center" class="container">
+                {% for x in range (len) %}
+                <tr>
+                    {% for y in range (len) %}
+                        <td 
+                        {% if field[x][y]==-1 %} 
+                            class="miss"></td>
                         {% else %}
-                            class="border">{{field[x][y]}}</td>
+                            {% if field[x][y] == 0 or field[x][y] == 1 %}
+                                onclick="fire({{ x }}, {{ y }})" class="sea"></td>
+                            {% else %}
+                                {% if field[x][y] == -10 %}
+                                    class="beatenShip"></td>
+                                {% else %}
+                                    class="border">{{field[x][y]}}</td>
+                                {% endif %}
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
+                    {% endfor %}
+                </tr>
                 {% endfor %}
-            </tr>
-            {% endfor %}
-        </table>
-        <br>
-        <br>
-        <script src="static/game.js"></script>
+            </table>
+            <br>
+            <br>
+            <script src="static/game.js"></script>
+        </div>
+        <div class="row" align="right">
+            <div class="object" align="right">
+                <p>Осталось выстрелов: {{shots}}</p>
+            </div>
+            <div class="object">
+                <p>Осталось кораблей: {{remain}}</p>
+            </div>
+            <div class="object, actionlist">
+                <t align="center">История выстрелов:</t>
+                {% for action in actions %}
+                <t>{{action}}</t>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </body>
 

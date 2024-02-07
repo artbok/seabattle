@@ -1,41 +1,15 @@
 <style>
-    label {
-        font-family: 'segoe script', sans-serif;
-        color: blask;
-        font-size: 60px;
-    }
-
     body {
-        background: url("static/add_players.jpg");
+        background: url("https://png.pngtree.com/background/20230616/original/pngtree-painting-of-an-under-water-turtle-picture-image_3635254.jpg");
         background-size: cover;
         background-repeat: no-repeat;
         background-position-y: center;
-    }
-
-    select {
-        font-size: 40px;
-        width: 400px;
-        height: 60px;
-        font-family: 'segoe script', sans-serif;
-        background-color: #ADD8E6;
-    }
-
-    button {
-        background-color: #40E0D0;
-        border-color: blask;
-        color: blask;
-        font-size: 40pt;
-        border-radius: 15%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: 'segoe script', sans-serif;
-
     }
 </style>
 
 <head>
     <title>Добавить игроков</title>
+    <link rel="stylesheet" href='static/main.css'>
 </head>
 
 <body>
@@ -44,14 +18,14 @@
             <label for="player1">Игрок1: </label>
             <select name="player1" id="player1">
                 {% for player in players %}
-                    <option value={{player}}>{{player}}</option>
+                <option value={{player}}>{{player}}</option>
                 {% endfor %}
             </select>
             <br>
             <label for="player2">Игрок2: </label>
             <select name="player2" id="player2">
                 {% for player in players %}
-                    <option value={{player}}>{{player}}</option>
+                <option value={{player}}>{{player}}</option>
                 {% endfor %}
             </select>
             <br>

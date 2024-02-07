@@ -1,19 +1,4 @@
 <style>
-    button {
-        background-color: #593bef;
-        border-color: blask;
-        color: white;
-        font-size: 30pt;
-        border-radius: 25%;
-
-    }
-</style>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-</head>
-<style>
     body {
         height: 500px;
         background: url(https://img.freepik.com/free-photo/sea-water-background_74190-1326.jpg) no-repeat;
@@ -22,24 +7,27 @@
 
     }
 </style>
+<html lang="en">
+
+<head>
+    <title>Просмотр полей</title>
+    <link rel="stylesheet" href='static/main.css'>
+</head>
+
 <body>
     <form method="POST">
-        <table align="center" border=1 cellspacing="0" class="container">
-            <font face="COMIC SANS MS">
-                {% for field in fields %}
-                    <tr>
-                    <p style="font-size: 60px">
-                        {{field}}
-                        <font face="COMIC SANS MS"><button name="play" value="{{field}}">Играть</button>
-                            <font face="COMIC SANS MS"><button name="edit" value="{{field}}">Редактировать</button>
-                                <font face="COMIC SANS MS"><button name="delete" value="{{field}}">Удалить</button>
-                    </p>
-                    </tr>
-                {% endfor %}
-                <p align="center">
-                    <font face="COMIC SANS MS"><button name="create" value="{{field}}">Создать поле</button></font>
-                </p>
-        </table>
+        {% for field in fields %}
+        <div>
+            <p>{{field}}</p>
+            <button name="play" value="{{field}}">Играть</button>
+            <button name="edit" value="{{field}}">Редактировать</button>
+            <button name="delete" value="{{field}}">Удалить</button></p>
+        </div>
+        {% endfor %}
+        <p align="center">
+            <button name="create" value="{{field}}">Создать поле</button></font>
+        </p>
     </form>
 </body>
+
 </html>

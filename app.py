@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 from flask import Flask, render_template, request, url_for, redirect, session, jsonify, send_file
 from flask_sqlalchemy import SQLAlchemy
-
+from asyncio import sleep
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -105,17 +105,17 @@ class EditField:
     def placeShip(self, x, y) -> bool: 
         if self.field[x][y]: 
             self.field[x][y] = 0 
-            self.ships.remove(f"({x}, {y})") 
+            self.ships.remove(getPos(x, y)) 
             self.changeId = current_milli_time() 
             return True 
         else: 
-            can_place = ((x == self.n or (self.field[x + 1][y-1] != 1 and (self.field[x + 1][y] != 1)) 
-                         and (y == self.n or (self.field[x - 1][y+1] != 1) and (self.field[x][y+1] != 1))  
+            can_place = ((x == self.n or (self.field[x + 1][y-1] != 1 and self.field[x + 1][y] != 1)) 
+                         and (y == self.n or (self.field[x - 1][y+1] != 1 and self.field[x][y+1] != 1))  
                          and ((y == self.n or x == self.n) or (self.field[x + 1][y+1] != 1))  
-                         and (self.field[x][y-1] != 1) and (self.field[x - 1][y] != 1) and self.field[x - 1][y-1] != 1)) 
+                         and (self.field[x][y-1] != 1 and self.field[x - 1][y] != 1 and self.field[x - 1][y-1] != 1)) 
             if can_place: 
                 self.field[x][y] = 1 
-                self.ships.add(str((x, y))) 
+                self.ships.add(getPos(x, y)) 
                 self.changeId = current_milli_time() 
                 return True 
         return False
@@ -128,14 +128,18 @@ class Player:
     prizes = []
     def __init__(self, username):
         self.username = username
-
+    
+def getPos(x, y):
+    alphabet = {1: "А", 2: "Б", 3: "В", 4: "Г", 5: "Д", 6: "Е", 7: "Ж", 8: "З", 9: "И", 10: "К", 11: "Л", 12: "М", 13: "Н", 14: "О", 15: "П", 16: "Р", 17: "С", 18: "Т", 19: "У", 20: "Ф", 21: "Х", 22: "Ц", 23: "Ч", 24: "Ш", 25: "Э", 26: "Ю", 27: "Я"}
+    return alphabet[y] + str(x)
 
 class GameField:
     changeId = 0
     players: list[Player] = []
     prizes = dict()
     i = 0
-    titles = []
+    titles = []          
+
     def __init__(self, field: Field):
         self.name = field.name
         self.n = field.n
@@ -148,12 +152,18 @@ class GameField:
     def fire(self, x, y):
         value = self.field[x][y]
         self.field[x][y] = -1
-        self.i = abs(self.i - 1) if len(self.players) >= 2 and self.players[abs(self.i - 1)].shots > 0 else 0
-        pos = f"({x}, {y})"
+        pos = getPos(x, y)
+        
         self.changeId = current_milli_time()
         if value == 1:
-            self.titles.append(f"На ({pos}) был корабль! Получен приз:\n{self.prizes[pos]}")
-            return self.prizes[pos]
+            prize = self.prizes[pos]
+            del self.prizes[pos]
+            self.field[x][y] = -10
+            self.titles.append(f"На {pos} был корабль! Получен приз:\n{prize}")
+            self.players[self.i].prizes.append(prize)
+            self.i = abs(self.i - 1) if len(self.players) >= 2 and self.players[abs(self.i - 1)].shots > 0 else 0
+            return prize
+        self.i = abs(self.i - 1) if len(self.players) >= 2 and self.players[abs(self.i - 1)].shots > 0 else 0
         self.titles.append(f"На {pos} ничего не было! Промах...")
         return False
         
@@ -206,7 +216,7 @@ def getRegistrationData():
     username = request.form['username'].lower()
     password = request.form["password"].lower()
     if getUser(username):
-        return "Account with that username already exists!"
+        return render_template("registration-error.html")
     addUser(username, password)
     session["username"] = username
     session["password"] = password
@@ -302,8 +312,10 @@ def fieldEditing():
 
 @app.route('/field-editing', methods=['POST'])
 def saveField():
-    addField()
-    return render_template("field-saved.html")
+    if len(editableField.ships) != 0:
+        addField()
+        return render_template("field-saved.html")
+    return render_template("field-editing-error.html")
 
 
 @app.route('/field-cell-update', methods = ['POST'])
@@ -337,6 +349,8 @@ def setupPrizes():
 
 @app.route('/setup-prizes', methods=['POST'])
 def getPrizes():
+    if not game:
+        return redirect("fields")
     rewards = dict()
     for pos in game.ships:
         name = "prizeFor" + str(pos)
@@ -370,19 +384,36 @@ def startGame():
 
 @app.route('/game', methods = ['GET'])
 def gameScreen():
+    global game
     if not isAuthorized(): 
         return redirect(url_for('login'))
     if session["username"] == 'admin':
         if not game:
             return redirect(url_for('fields'))
         players = [(player.username, player.shots) for player in game.players]
-        return render_template('admin-game.html', field = game.field, len = game.n + 1, move = f"{game.players[game.i].username} выбирает куда сбросить ядерку", players = players, remain=len(game.ships), actions=game.getTitle())
+        return render_template('admin-game.html', field = game.field, len = game.n + 1, move = f"{game.players[game.i].username} выбирает куда сбросить ядерку", players = players, remain=len(game.ships), actions=game.titles)
     else:
         if game:
+            s = True
+            for player in game.players:
+                if player.shots != 0:
+                    s = False
+            if (len(game.prizes) == 0 or s) and game.changeId:
+                game.changeId = current_milli_time()
+                prizes = []
+                for player in game.players:
+                    if player.username == session["username"]:
+                        prizes = player.prizes
+                        game.players.remove(player)
+                        break
+                if len(game.players) == 0:
+                    game = None
+                return render_template('game-over.html', prizes=prizes, len = len(prizes))
+
             for player in game.players:
                 if session["username"] == player.username:
                     move = "ВАШ ХОД! СТРЕЛЯЙТЕ!" if game.players[game.i] == player else "ДОЖДИСЬ СВОЕГО ХОДА!"
-                    return render_template('player-game.html', field = game.field, len = game.n + 1, move = move)
+                    return render_template('player-game.html', field = game.field, len = game.n + 1, move = move, remain = len(game.ships), shots = player.shots, actions = game.titles)
         return redirect(url_for('waitingScreen'))
 
 
@@ -401,7 +432,7 @@ def shot():
             return "miss"
         else:
             player.shots -= 1
-            player.prizes.append(prize)
+
             return 'hit'
     else:
         return 'notYourMove'
@@ -413,6 +444,7 @@ def addShot():
     for player in game.players:
         if player.username == username:
             player.shots += 1
+    game.changeId = current_milli_time()
     return 'OK'
 
 if __name__ == '__main__':

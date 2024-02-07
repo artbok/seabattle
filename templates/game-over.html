@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+     body {
+        background: url("https://avatanplus.com/files/resources/original/5b49c2214a94f164981e521a.jpg");
+        background-size: auto;
+        background-repeat: no-repeat;
+    }
+    t {
+        font-size: 20px;
+        font-family: 'segoe script', sans-serif;
+        color: white;
+    }
+</style>>
+<head>
+    <meta charset="UTF-8">
+    <title> Конец игры </title>
+    <link rel="stylesheet" href='static/main.css' />
+</head>
+<body>
+<t> Игра окончена!
+    <br>
+{% if len != 0 %}
+    Вы выиграли призы:
+    {% for prize in prizes %}
+        <br>
+        - {{prize}}
+    {% endfor %}
+{% else %}
+    Вы ничего не выиграли(вы лох)
+{% endif %}
+        </t>
+</body>
+
+</html>
