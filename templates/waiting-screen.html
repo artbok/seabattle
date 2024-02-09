@@ -1,8 +1,8 @@
 <style>
     body {
-        height: 250px;
         background: url(https://catherineasquithgallery.com/uploads/posts/2021-02/1612755086_79-p-fon-golubie-volni-90.jpg) no-repeat;
         background-size: cover;
+        background-repeat: no-repeat;
     }
 </style>
 
@@ -41,16 +41,14 @@
             уничтожить как можно больше кораблей, стреляя в пустые клетки в ваш ход. После каждого попадания вам будут даваться призы, которые вы можете
             посмортеть в таблице призов.</p>
     </strong>
-    <p align="center"> ТАБЛИЦА ПРИЗОВ</p>
-
-    <body>
-        <table class="prizes">
-            <tr class="prizes">
-                <th class="prizes">Призы</th>
-                <th class="prizes">Дата выдачи</th>
-            </tr>
-            <tr>{% for prize in prizes %} <td>{{prize[0]}}</td>
-                <td>{{prize[1]}}</td> {% endfor %}
-            </tr>
-        </table>
+    {% if len != 0 %}
+        <p align="center"> СПИСОК ПРИЗОВ</p>
+        <center>
+            {% for prize in prizes %}
+            <p>&#183; {{prize.name}}</p>
+            {% endfor %}
+        </center>
+    {% else %}
+        <p align="center"> У вас пока нет призов :( Полученные будут отображаться здесь</p>
+    {% endif %}
     </body>

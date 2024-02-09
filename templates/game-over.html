@@ -1,35 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <style>
-     body {
-        background: url("https://avatanplus.com/files/resources/original/5b49c2214a94f164981e521a.jpg");
-        background-size: auto;
-        background-repeat: no-repeat;
+    body {
+        background-color: #ADD8E6;
+
     }
+
     t {
-        font-size: 20px;
+        font-size: 65px;
         font-family: 'segoe script', sans-serif;
-        color: white;
+        color: back;
     }
-</style>>
+
+    r {
+        font-size: 75px;
+        font-family: 'Arial', sans-serif;
+        color: back;
+    }
+</style>
+
 <head>
-    <meta charset="UTF-8">
-    <title> Конец игры </title>
-    <link rel="stylesheet" href='static/main.css' />
-</head>
+
 <body>
-<t> Игра окончена!
-    <br>
-{% if len != 0 %}
-    Вы выиграли призы:
-    {% for prize in prizes %}
-        <br>
-        - {{prize}}
-    {% endfor %}
-{% else %}
-    Вы ничего не выиграли(вы лох)
-{% endif %}
+    <center>
+        <meta charset="UTF-8">
+        <title> Конец игры </title>
+        <link rel="stylesheet" href='static/main.css' />
+        </head>
+    </center>
+</body>
+
+<body>
+    <center>
+        <r>Игра окончена!</r> <br>{% if len != 0 %}
+        <t>Вы выиграли призы:
+            {% for prize in prizes %}
+            <br> &#183; {{prize}}
+            {% endfor %}
+            {% else %}
+            Вы ничего не выиграли
+            {% endif %}
         </t>
+        <p align="center"><a href="/waiting">Вернуться на главное меню</a></p>
+    </center>
 </body>
 
 </html>

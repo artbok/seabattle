@@ -3,7 +3,7 @@ async function fire(x, y) {
     data = new Object();
     data.x = x;
     data.y = y;
-    cd += 2
+    cd = 1
     fetch("fire", {
         method: 'POST',
         headers: new Headers({
@@ -29,7 +29,7 @@ async function fire(x, y) {
 async function addShot(username) {
     data = new Object()
     data.username = username
-    cd += 2
+    cd = 1
     fetch("addShot", {
         method: 'POST',
         headers: new Headers({

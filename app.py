@@ -1,9 +1,8 @@
 import os
 import time
 from datetime import datetime
-from flask import Flask, render_template, request, url_for, redirect, session, jsonify, send_file
+from flask import Flask, render_template, request, url_for, redirect, session
 from flask_sqlalchemy import SQLAlchemy
-from asyncio import sleep
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -17,8 +16,6 @@ db = SQLAlchemy(app)
 
 connectedUsers = dict()
 
-#username: Admin
-#password: 12345
 
 def current_milli_time():
     return round(time.time() * 1000)
@@ -48,9 +45,9 @@ class Field(db.Model):
 
 
 class Prize(db.Model):
-    name = db.Column(db.String, primary_key=True)
+    id = db.Column(db.Integer , primary_key=True , autoincrement=True)
+    name = db.Column(db.String)
     owner = db.Column(db.String)
-    receiewingDate = db.Column(db.DateTime, default = datetime.now())
     def __init__(self, name, owner):
         self.name = name
         self.owner = owner
@@ -61,47 +58,29 @@ def addPrize(name, username):
     db.session.add(prize)
     db.session.commit()
 
-
-def addField():
-    global editableField
-    field = getField(editableField.name)
-    if not field:
-        field = Field(editableField.name, editableField.n, str(editableField.field), str(editableField.ships))
-        db.session.add(field)
-    else:
-        field.field = str(editableField.field)
-        field.ships = str(editableField.ships)
-    db.session.commit()
-    editableField = None
-
-
-def getField(fieldname) -> Field:
-    return Field.query.filter(Field.name == fieldname).first()
+def getPrizes(username):
+    return list(Prize.query.filter(Prize.owner == username))
 
 
 class EditField:
     name = ""
     n = 0
-    field = None
     ships = None
     changeId = 0
     def __init__(self, name, n, field = list(), ships = set()): 
         self.name = name
         self.n = n
-        self.field: list[list] = field
+        self.field = field
         self.ships = ships
         self.changeId = 0
         alphabet = ['', 'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ж', 'З', 'И', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Э', 'Ю', 'Я'] 
-        if not field: 
+        if not self.field: 
             self.field.append(alphabet[:(n+1)])
             for i in range(1, n + 1): 
                 self.field.append([0] * (n+1))
                 self.field[i][0] = str(i)
-        else:
-            self.field = field 
-        if ships: 
-            self.ships = ships 
-
+    def getField(self):
+        return self.field
     def placeShip(self, x, y) -> bool: 
         if self.field[x][y]: 
             self.field[x][y] = 0 
@@ -120,14 +99,31 @@ class EditField:
                 return True 
         return False
 
-
 editableField: EditField = None
+
+def addField():
+    global editableField
+    field = getField(editableField.name)
+    if not field:
+        field = Field(editableField.name, editableField.n, str(editableField.getField()), str(editableField.ships))
+        db.session.add(field)
+    else:
+        field.field = str(editableField.getField())
+        field.ships = str(editableField.ships)
+    db.session.commit()
+    editableField = None
+
+def getField(fieldname) -> Field:
+    return Field.query.filter(Field.name == fieldname).first()
+
 
 class Player:
     shots = 2
     prizes = []
     def __init__(self, username):
         self.username = username
+        self.prizes = []
+        self.shots = 2
     
 def getPos(x, y):
     alphabet = {1: "А", 2: "Б", 3: "В", 4: "Г", 5: "Д", 6: "Е", 7: "Ж", 8: "З", 9: "И", 10: "К", 11: "Л", 12: "М", 13: "Н", 14: "О", 15: "П", 16: "Р", 17: "С", 18: "Т", 19: "У", 20: "Ф", 21: "Х", 22: "Ц", 23: "Ч", 24: "Ш", 25: "Э", 26: "Ю", 27: "Я"}
@@ -139,12 +135,16 @@ class GameField:
     prizes = dict()
     i = 0
     titles = []          
-
     def __init__(self, field: Field):
         self.name = field.name
         self.n = field.n
         self.field = eval(field.field)
         self.ships = eval(field.ships)
+        self.titles = []
+        self.changeId = 0
+        self.prizes = dict()
+        self.i = 0
+        self.players = []
     
     def getTitle(self):
         return " | ".join(self.titles)
@@ -221,6 +221,8 @@ def getRegistrationData():
     session["username"] = username
     session["password"] = password
     session.permanent = True
+    if username == 'admin':
+        return redirect(url_for("fields"))
     return redirect(url_for("waitingScreen"))
 
 
@@ -247,12 +249,13 @@ def getLoginData():
 @app.route('/waiting', methods = ["GET"])
 def waitingScreen():
     if not isAuthorized(): return redirect(url_for('login'))
-    return render_template("waiting-screen.html", username = session["username"])
+    prizes = getPrizes(session["username"])
+    return render_template("waiting-screen.html", username = session["username"], prizes = prizes, len = len(prizes))
 
 @app.route('/waiting', methods = ["POST"])
 def checkOnline():
+    global game
     connectedUsers[session["username"]] = current_milli_time()
-    print(f'{session["username"]} is online!')
     if game and game.players != 0:
         for player in game.players:
             if session["username"] == player.username:
@@ -299,6 +302,8 @@ def getFieldSettings():
     fieldsize = int(request.form['fieldsize'])
     fieldname = request.form["fieldname"]
     del editableField
+    if getField(fieldname):
+        return render_template('creating-field-error.html')
     editableField = EditField(fieldname, fieldsize, [], set())
     return redirect(url_for('fieldEditing'))
 
@@ -307,7 +312,7 @@ def getFieldSettings():
 def fieldEditing():
     if editableField == None: 
         return adminPage(redirect(url_for("fields")))
-    return adminPage(render_template('fieldediting.html', field = editableField.field, len = editableField.n + 1))
+    return adminPage(render_template('fieldediting.html', name = editableField.name, field = editableField.getField(), len = editableField.n + 1))
 
 
 @app.route('/field-editing', methods=['POST'])
@@ -344,11 +349,11 @@ def waitFieldUpdate():
 def setupPrizes():
     if not game:
         return adminPage(redirect(url_for("fields")))
-    return adminPage(render_template("setup-prizes.html", poses = game.ships))
+    return adminPage(render_template("setup-prizes.html", poses = game.ships, field = game.field, len = game.n + 1))
 
 
 @app.route('/setup-prizes', methods=['POST'])
-def getPrizes():
+def confirmPrizes():
     if not game:
         return redirect("fields")
     rewards = dict()
@@ -391,7 +396,7 @@ def gameScreen():
         if not game:
             return redirect(url_for('fields'))
         players = [(player.username, player.shots) for player in game.players]
-        return render_template('admin-game.html', field = game.field, len = game.n + 1, move = f"{game.players[game.i].username} выбирает куда сбросить ядерку", players = players, remain=len(game.ships), actions=game.titles)
+        return render_template('admin-game.html', field = game.field, len = game.n + 1, move = f"{game.players[game.i].username} выбирает куда выстрелить", players = players, remain=len(game.ships), actions=game.titles)
     else:
         if game:
             s = True
@@ -400,16 +405,19 @@ def gameScreen():
                     s = False
             if (len(game.prizes) == 0 or s) and game.changeId:
                 game.changeId = current_milli_time()
+                for player in game.players:
+                    print(player.prizes)
                 prizes = []
                 for player in game.players:
                     if player.username == session["username"]:
-                        prizes = player.prizes
+                        prizes = player.prizes.copy()
                         game.players.remove(player)
                         break
                 if len(game.players) == 0:
+                    del game
                     game = None
-                return render_template('game-over.html', prizes=prizes, len = len(prizes))
-
+                print(prizes)
+                return render_template('game-over.html', prizes = prizes, len = len(prizes))
             for player in game.players:
                 if session["username"] == player.username:
                     move = "ВАШ ХОД! СТРЕЛЯЙТЕ!" if game.players[game.i] == player else "ДОЖДИСЬ СВОЕГО ХОДА!"
@@ -432,7 +440,7 @@ def shot():
             return "miss"
         else:
             player.shots -= 1
-
+            addPrize(prize, session["username"])
             return 'hit'
     else:
         return 'notYourMove'
@@ -448,4 +456,6 @@ def addShot():
     return 'OK'
 
 if __name__ == '__main__':
+    from app_tests import runTests
+    runTests()
     app.run()

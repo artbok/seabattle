@@ -31,6 +31,7 @@
         font-size: 45pt;
         font-family: 'segoe script', sans-serif;
         color: white;
+        text-align: center;
     }
 
     j {
@@ -57,14 +58,17 @@
         font-family: 'segoe script', sans-serif;
         color: white;
     }
+
     div.actionlist {
         border: rgb(40, 210, 225);
-        background-color: rgb(40, 210, 225);;
+        background-color: rgb(40, 210, 225);
+        ;
         padding: 5px;
         font-size: 50px;
         border-radius: 7%;
     }
 </style>
+
 <head>
     <meta charset="UTF-8">
     <title>Морской бой</title>
@@ -72,46 +76,44 @@
 </head>
 
 <body>
+    <o align="center">{{move}}</o>
     <div class="column">
         <div class="object" align="left">
-            <p align="center">{{move}}</p>
             <table border=1 cellspacing="0" align="center" class="container">
                 {% for x in range (len) %}
                 <tr>
                     {% for y in range (len) %}
-                        <td 
-                        {% if field[x][y]==-1 %} 
-                            class="miss"></td>
-                        {% else %}
-                            {% if field[x][y] == 0 or field[x][y] == 1 %}
-                                onclick="fire({{ x }}, {{ y }})" class="sea"></td>
-                            {% else %}
-                                {% if field[x][y] == -10 %}
-                                    class="beatenShip"></td>
-                                {% else %}
-                                    class="border">{{field[x][y]}}</td>
-                                {% endif %}
-                            {% endif %}
-                        {% endif %}
+                    <td {% if field[x][y]==-1 %} class="miss"></td>
+                    {% else %}
+                    {% if field[x][y] == 0 or field[x][y] == 1 %}
+                    onclick="fire({{ x }}, {{ y }})" class="sea"></td>
+                    {% else %}
+                    {% if field[x][y] == -10 %}
+                    class="beatenShip"></td>
+                    {% else %}
+                    class="border">{{field[x][y]}}</td>
+                    {% endif %}
+                    {% endif %}
+                    {% endif %}
                     {% endfor %}
                 </tr>
                 {% endfor %}
             </table>
             <br>
-            <br>
             <script src="static/game.js"></script>
         </div>
-        <div class="row" align="right">
-            <div class="object" align="right">
-                <p>Осталось выстрелов: {{shots}}</p>
+        <div class="row" align="center">
+            <div class="object" align="center">
+                <o>Осталось выстрелов: {{shots}}</o>
             </div>
             <div class="object">
-                <p>Осталось кораблей: {{remain}}</p>
+                <o>Осталось кораблей: {{remain}}</o>
             </div>
             <div class="object, actionlist">
                 <t align="center">История выстрелов:</t>
                 {% for action in actions %}
-                <t>{{action}}</t>
+                <br>
+                <t>&#183; {{action}}</t>
                 {% endfor %}
             </div>
         </div>

@@ -1,58 +1,116 @@
 <html lang="en">
 <style>
-    body {
-        background: url("static/auth_bg.jpg");
-        background-size: cover;
-        background-repeat: repeat-y;
-    }
-
-    p {
-        font-family: 'segoe script', sans-serif;
-        color: blask;
-        font-size: 40px;
-    }
-
-    input {
-        font-size: 40px;
-        width: 500px;
-        height: 50px;
-        font-family: 'segoe script', sans-serif;
-        background-color: #ADD8E6;
-    }
-
-    button {
-        background-color: #87CEFA;
-        border-color: blask;
-        color: #FFF0F5;
-        font-size: 40pt;
-        border-radius: 15%;
+    .column {
         display: flex;
+    }
+
+    .object {
+        margin: 30px;
+        padding: 30px;
+    }
+
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    button.saved {
+        background-color: #00CCCC;
+        border-color: black;
+        color: black;
+        font-size: 50px;
+        border-radius: 15%;
         align-items: center;
         justify-content: center;
         font-family: 'segoe script', sans-serif;
+        border: 2px solid rgb(0, 0, 0);
+        border-radius: 4px;
+    }
 
+    o {
+        font-size: 45pt;
+        font-family: 'segoe script', sans-serif;
+        color: white;
+    }
+    t {
+        font-size: 20pt;
+        font-family: 'segoe script', sans-serif;
+        color: white;
+    }
+    j {
+        font-size: 45pt;
+        font-family: 'segoe script', sans-serif;
+        color: white;
+    }
+
+    l {
+        font-size: 60pt;
+        font-family: 'Arial', sans-serif;
+        color: white;
+    }
+
+    body {
+        font-family: 'segoe script', sans-serif;
+        font-weight: 300;
+        background-color: #1F2739;
+        font-size: 50pt;
     }
 </style>
 
 <head>
     <title>Назначение призов</title>
+    <link rel="stylesheet" href='static/main.css'>
 </head>
 
 <body>
-    <center>
-        <form method="POST">
-            <table>
-                <p>Координаты и Призы:</p>
-                {% for pos in poses %}
+    <div>
+        <br>
+        <l>
+            <center>Назначение призов</center>
+        </l>
+    </div>
+    <div class="column">
+        <div class="object" align="left">
+            <table border="1" cellspacing="0" class="container">
+                {% for x in range(len) %}
                 <tr>
-                    <p>{{pos}}
-                        <input type="text" name="prizeFor{{pos}}" required="required">
-                        <br>
+                    {% for y in range(len) %}
+                        <td 
+                        {% if field[x][y] == 0 %}
+                            class="sea"></td>
+                        {% else %}
+                            {% if field[x][y] == 1 %}
+                                class="ship"</td>
+                            {% else %}
+                                class="border">{{field[x][y]}}</td>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
                 </tr>
                 {% endfor %}
             </table>
-            <input type="submit" value="Сохранить">
             <br>
-    </center>
-    </form>
+        </div>
+        <div class="row" align="right">
+            <div class="object" align="right">
+                <br>
+                <br>
+                <form method="POST">
+                    <table>
+                        {% for pos in poses %}
+                        <tr>
+                            <o>{{pos}}</o>
+                                <input type="text" name="prizeFor{{pos}}" required="required">
+                                <br>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    <input type="submit" value="Сохранить">
+                    <br>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </body>
