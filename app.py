@@ -396,7 +396,7 @@ def gameScreen():
         if not game:
             return redirect(url_for('fields'))
         players = [(player.username, player.shots) for player in game.players]
-        return render_template('admin-game.html', field = game.field, len = game.n + 1, move = f"{game.players[game.i].username} выбирает куда выстрелить", players = players, remain=len(game.ships), actions=game.titles)
+        return render_template('admin-game.html', field = game.field, len = game.n + 1, move = f"{game.players[game.i].username} выбирает куда выстрелить", players = players, remain=len(game.prizes), actions=game.titles)
     else:
         if game:
             s = True
